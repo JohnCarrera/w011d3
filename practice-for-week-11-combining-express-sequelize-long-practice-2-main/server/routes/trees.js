@@ -11,7 +11,7 @@ const router = express.Router();
  * INTERMEDIATE BONUS PHASE 1 (OPTIONAL), Step A:
  *   Import Op to perform comparison operations in WHERE clauses
  **/
-// Your code here
+ const { Tree } = require('../db/models');
 
 /**
  * BASIC PHASE 1, Step B - List of all trees in the database
@@ -26,7 +26,10 @@ const router = express.Router();
 router.get('/', async (req, res, next) => {
     let trees = [];
 
-    // Your code here
+    trees = await Tree.findAll({
+      attributes:['id', 'tree', 'heightFt'],
+      order:[['heightFt', 'DESC']]
+    });
 
     res.json(trees);
 });
@@ -44,7 +47,11 @@ router.get('/:id', async (req, res, next) => {
     let tree;
 
     try {
-        // Your code here
+        tree = await Tree.findOne({
+          where: {
+            id: req.params.id
+          }
+        })
 
         if (tree) {
             res.json(tree);
@@ -82,6 +89,13 @@ router.get('/:id', async (req, res, next) => {
  */
 router.post('/', async (req, res, next) => {
     try {
+
+      let newTree = await Tree.create({
+        tree: req.body.name,
+        location: req.body.location,
+        heightFt: req.body.height,
+        groundCircumferenceFt: req.body.size
+      })
         res.json({
             status: "success",
             message: "Successfully created new tree",
